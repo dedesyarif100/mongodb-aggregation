@@ -1,0 +1,193 @@
+mongodb: 
+
+db.getCollection("activities").find({status: "survey_post"})
+
+Aggregation Pipeline Stages :
+# $addFields
+db.activities.aggregate([
+    {$match: {status: "view_post"}}
+])
+
+db.activities.aggregate([
+    {$match: {status: "view_post"}},
+    {
+        $addFields: { "cats": 20 }
+    }
+])
+
+# $bucket
+# $bucketAuto
+# $changeStream
+# $collStats
+# $count
+db.activities.aggregate([
+    {$match: { status: "view_post" }},
+    { $group: { _id: null, myCount: { $sum: 1 } } },
+    { $project: { _id: 0 } }
+])
+
+db.categories.aggregate([
+    {$match: {
+        id: {$lte: 7}
+    }},
+    {$count: "passing_total_id"}
+])
+
+# $densify
+# $documents
+# $facet
+# $fill
+# $geoNear
+# $graphLookup
+# $group
+# $indexStats
+# $limit
+db.getCollection("activities").aggregate([
+    {$limit: 8}
+])
+
+# $listSessions
+# $lookup
+db.getCollection("roles").aggregate([
+    {
+        $match: {id: 13}
+    },
+    {
+        $lookup: {
+            from: "accounts",
+            localField: "id",
+            foreignField: "role_id",
+            as: "result"
+        }
+    },
+    {
+        $addFields: {
+            count: {$size: "$result"},
+            totalCount: {$size: "$result"},
+        }
+    },
+    {
+        $addFields: {totalScore: {
+            $add: ["$count", "$totalCount"]
+        }}
+    }
+])
+
+db.getCollection("roles").aggregate([
+    {
+        $match: {id: 13}
+    },
+    {
+        $lookup: {
+            from: "accounts",
+            localField: "id",
+            foreignField: "role_id",
+            as: "result"
+        }
+    },
+    {
+        $addFields: {count: {$size: "$result"}}
+    },
+    {
+        $addFields: {"specs.type": "$count"}
+    }
+])
+
+# $match
+db.getCollection("polling_setups").aggregate([
+    {$match : {
+        related_article : 1,
+        title: "Do you like me now 4 ?",
+    }}
+])
+
+# $merge
+# $out
+# $planCacheStats
+# $project
+db.categories.aggregate([
+    {$project: {"name": 0, "slug": 0}}
+])
+
+db.categories.aggregate([
+    {$project: {name: 0, slug: 0}}
+])
+
+db.categories.aggregate([
+    {$project: {"name": 1, "slug": 1}}
+])
+
+db.categories.aggregate([
+    {$project: {name: 1, slug: 1}}
+])
+
+db.global_playlists.aggregate([
+    {$project: {
+        "post_populer.start_date": 0,
+        "post_populer.end_date": 0,
+    }}
+])
+
+db.global_playlists.aggregate([
+    {$project: {
+        "post_populer.start_date": 1,
+        "post_populer.end_date": 1,
+    }}
+])
+
+db.global_playlists.aggregate([
+    {$project: {
+        "post_populer": {
+            "start_date": 1,
+            "end_date": 1,
+         },
+    }}
+])
+
+# $redact
+# $replaceRoot
+# $replaceWith
+# $sample
+db.categories.aggregate(
+    [{ $sample: { size: 5}}]
+)
+
+# $search
+# $searchMeta
+# $set
+# $setWindowFields
+# $skip
+db.categories.aggregate([
+    {$skip: 10}
+])
+
+# $sort
+db.categories.aggregate([
+    {$sort : {id: -1 }}
+])
+
+db.categories.aggregate([
+    {$match: {parent_id: 0}},
+    {$sort : {id: -1 }}
+])
+
+# $sortByCount
+# $unionWith
+# $unset
+db.categories.aggregate([
+    {$unset: "name"}
+])
+
+db.categories.aggregate([
+    {$unset: ["name", "slug"]}
+])
+
+db.global_playlists.aggregate([
+    {$unset: ["post_populer.start_date", "post_populer.end_date"]}
+])
+
+db.global_playlists.aggregate([
+    {$unset: ["post_headline", "post_populer.post_id"]}
+])
+
+# $unwind

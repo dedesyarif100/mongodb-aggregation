@@ -1,0 +1,32 @@
+mongodb:
+
+Field Update Operators :
+# $currentDate
+# $inc
+# $min
+# $max
+# $mul
+# $rename
+# $set
+# $setOnInsert
+# $unset
+
+Array Update Operators :
+- Update Operators :
+# $
+# $[]
+# $[<identifier>]
+# $addToSet
+# $pop
+# $pull
+# $push
+# $pullAll
+
+- Update Operator Modifiers :
+# $each
+# $position
+# $slice
+# $sort
+
+Bitwise Update Operator :
+# $bit

@@ -1,0 +1,417 @@
+mongodb: 
+
+Expression Operators :
+- Arithmetic Expression Operators :
+# $abs
+# $add
+# $ceil
+# $divide
+# $exp
+# $floor
+# $ln
+# $log
+# $log10
+# $mod
+# $multiply
+# $pow
+# $round
+# $sqrt
+# $subtract
+# $trunc
+
+- Array Expression Operators :
+# $arrayElemAt
+# $arrayToObject
+# $concatArrays
+# $filter
+# $first
+# $firstN
+# $in
+# $indexOfArray
+# $isArray
+# $last
+# $lastN
+# $map
+# $maxN
+# $minN
+# $objectToArray
+# $range
+# $reduce
+# $reverseArray
+# $size
+# $slice
+# $sortArray
+# $zip
+
+- Boolean Expression Operators :
+# $and
+# $not
+# $or
+
+- Comparison Expression Operators :
+# $cmp
+# $eq
+# $gt
+# $gte
+# $lt
+# $lte
+# $ne
+
+- Conditional Expression Operators :
+# $cond
+# $ifNull
+# $switch
+
+- Custom Aggregation Expression Operators :
+# $accumulator
+# $function
+
+- Data Size Operators :
+# $binarySize
+# $bsonSize
+
+- Date Expression Operators :
+# $dateAdd
+# $dateDiff
+# $dateFromParts
+# $dateFromString
+# $dateSubtract
+# $dateToParts
+# $dateToString
+# $dateTrunc
+# $dayOfMonth
+# $dayOfWeek
+# $dayOfYear
+# $hour
+# $isoDayOfWeek
+# $isoWeek
+# $isoWeekYear
+# $millisecond
+# $minute
+# $month
+# $second
+# $toDate
+# $week
+# $year
+# $add
+# $subtract
+
+- Literal Expression Operator :
+# $literal
+
+- Miscellaneous Operators :
+# $getField
+# $rand
+# $sampleRate
+
+- Object Expression Operators :
+# $mergeObjects
+# $objectToArray
+# $setField
+
+- Set Expression Operators :
+# $allElementsTrue
+# $anyElementTrue
+# $setDifference
+# $setEquals
+# $setIntersection
+# $setIsSubset
+# $setUnion
+
+- String Expression Operators :
+# $concat
+# $dateFromString
+# $dateToString
+# $indexOfBytes
+# $indexOfCP
+# $ltrim
+# $regexFind
+# $regexFindAll
+# $regexMatch
+# $replaceOne
+# $replaceAll
+# $rtrim
+# $split
+# $strLenBytes
+# $strLenCP
+# $strcasecmp
+# $substr
+# $substrBytes
+# $substrCP
+# $toLower
+# $toString
+# $trim
+# $toUpper
+
+- Text Expression Operator :
+# $meta
+
+- Timestamp Expression Operators :
+# $tsIncrement
+# $tsSecond
+
+- Trigonometry Expression Operators :
+# $sin
+# $cos
+# $tan
+# $asin
+# $acos
+# $atan
+# $atan2
+# $asinh
+# $acosh
+# $atanh
+# $sinh
+# $cosh
+# $tanh
+# $degreesToRadians
+# $radiansToDegrees
+
+- Type Expression Operators :
+# $convert
+# $isNumber
+# $toBool
+# $toDate
+# $toDecimal
+# $toDouble
+# $toInt
+# $toLong
+# $toObjectId
+# $toString
+# $type
+
+- Accumulators ($group, $bucket, $bucketAuto, $setWindowFields) :
+# $accumulator
+# $addToSet
+# $avg
+# $bottom
+# $bottomN
+# $count
+# $first
+# $firstN
+# $last
+# $lastN
+# $max
+# $maxN
+# $mergeObjects
+# $min
+# $push
+# $stdDevPop
+# $stdDevSamp
+# $sum
+# $top
+# $topN
+
+- Accumulators (in Other Stages) :
+# $avg
+# $max
+# $min
+# $stdDevPop
+# $stdDevSamp
+# $sum
+
+- Variable Expression Operators :
+# $let
+
+- Window Operators :
+# $addToSet
+# $avg
+# $bottom
+# $bottomN
+# $count
+# $covariancePop
+# $covarianceSamp
+# $denseRank
+# $derivative
+# $documentNumber
+# $expMovingAvg
+# $first
+# $integral
+# $last
+# $linearFill
+# $locf
+# $max
+# $min
+# $minN
+# $push
+# $rank
+# $shift
+# $stdDevPop
+# $stdDevSamp
+# $sum
+# $top
+# $topN
+
+- Alphabetical Listing of Expression Operators :
+# $abs
+# $accumulator
+# $acos
+# $acosh
+# $add
+# $addToSet
+# $allElementsTrue
+# $and
+# $anyElementTrue
+# $arrayElemAt
+# $arrayToObject
+# $asin
+# $asinh
+# $atan
+# $atan2
+# $atanh
+# $avg
+# $binarySize
+# $bottom
+# $bottomN
+# $bsonSize
+# $ceil
+# $cmp
+# $concat
+# $concatArrays
+# $cond
+# $convert
+# $cos
+# $cosh
+# $count
+# $covariancePop
+# $covarianceSamp
+# $dateAdd
+# $dateDiff
+# $dateFromParts
+# $dateSubtract
+# $dateTrunc
+# $dateToParts
+# $dateFromString
+# $dateToString
+# $dayOfMonth
+# $dayOfWeek
+# $dayOfYear
+# $degreesToRadians
+# $denseRank
+# $derivative
+# $divide
+# $documentNumber
+# $eq
+# $exp
+# $expMovingAvg
+# $filter
+# $first
+# $first
+# $firstN
+# $firstN
+# $floor
+# $function
+# $getField
+# $gt
+# $gte
+# $hour
+# $ifNull
+# $in
+# $indexOfArray
+# $indexOfBytes
+# $indexOfCP
+# $integral
+# $isArray
+# $isNumber
+# $isoDayOfWeek
+# $isoWeek
+# $isoWeekYear
+# $last
+# $last
+# $lastN
+# $lastN
+# $let
+# $linearFill
+# $literal
+# $ln
+# $locf
+# $log
+# $log10
+# $lt
+# $lte
+# $ltrim
+# $map
+# $max
+# $maxN
+# $maxN
+# $mergeObjects
+# $meta
+# $min
+# $minN
+# $minN
+# $millisecond
+# $minute
+# $mod
+# $month
+# $multiply
+# $ne
+# $not
+# $objectToArray
+# $or
+# $pow
+# $push
+# $radiansToDegrees
+# $rand
+# $range
+# $rank
+# $reduce
+# $regexFind
+# $regexFindAll
+# $regexMatch
+# $replaceOne
+# $replaceAll
+# $reverseArray
+# $round
+# $rtrim
+# $sampleRate
+# $second
+# $setDifference
+# $setEquals
+# $setField
+# $setIntersection
+# $setIsSubset
+# $setUnion
+# $shift
+# $size
+# $sin
+# $sinh
+# $slice
+# $sortArray
+# $split
+# $sqrt
+# $stdDevPop
+# $stdDevSamp
+# $strcasecmp
+# $strLenBytes
+# $strLenCP
+# $substr
+# $substrBytes
+# $substrCP
+# $subtract
+# $sum
+# $switch
+# $tan
+# $tanh
+# $toBool
+# $toDate
+# $toDecimal
+# $toDouble
+# $toInt
+# $toLong
+# $toObjectId
+# $top
+# $topN
+# $toString
+# $toLower
+# $toUpper
+# $trim
+# $trunc
+# $tsIncrement
+# $tsSecond
+# $type
+# $unsetField
+# $week
+# $year
+# $zip
+# 
+# 

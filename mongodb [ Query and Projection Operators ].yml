@@ -1,0 +1,68 @@
+mongodb: 
+
+Comparison Query Operators :
+
+# $eq
+# $gt
+# $gte
+# $in
+# $lt
+# $lte
+# $ne
+# $nin
+
+Logical Query Operators :
+# $and
+# $not
+# $nor
+# $or
+
+Element Query Operators :
+# $exists
+# $type
+
+Evaluation Query Operators :
+# $expr
+# $jsonSchema
+# $mod
+# $regex
+# $text
+# $where
+
+Geospatial Query Operators :
+- Query Selectors:
+# $geoIntersects
+# $geoWithin
+# $near
+# $nearSphere
+
+- Geometry Specifiers :
+# $box
+# $center
+# $centerSphere
+# $geometry
+# $maxDistance
+# $minDistance
+# $polygon
+
+Array Query Operators :
+# $all
+# $elemMatch
+# $size
+
+Bitwise Query Operators :
+# $bitsAllClear
+# $bitsAllSet
+# $bitsAnyClear
+# $bitsAnySet
+
+Projection Operators :
+# $
+# $elemMatch
+# $meta
+# $slice
+
+Miscellaneous Query Operators :
+# $comment
+# $rand
+# $natural
