@@ -244,15 +244,123 @@ Expression Operators :
 
 - Alphabetical Listing of Expression Operators :
 # $abs
+db.ratings.aggregate([
+	{
+		$project: { 
+			delta: { 
+				$abs: { 
+					$subtract: [ "$start", "$end" ] 
+				}
+			}
+		}
+	}
+])
+
 # $accumulator
 # $acos
 # $acosh
 # $add
+db.sales.aggregate([
+	{ 
+		$project: { 
+			item: 1, 
+			total: { 
+				$add: [ "$price", "$fee" ] 
+			}
+		}
+	}
+])
+
+db.sales.aggregate([
+	{ 
+		$project: { 
+			item: 1, 
+			billing_date: { 
+				$add: [ "$date", 3*24*60*60000 ]
+			} 
+		}
+	}
+])
+
 # $addToSet
+db.sales.aggregate([
+	{
+		$group: {
+			_id: { 
+				day: { $dayOfYear: "$date"}, 
+				year: { $year: "$date" } 
+			},
+			itemsSold: { $addToSet: "$item" }
+		}
+	}
+])
+
+db.cakeSales.aggregate( [
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				cakeTypesForState: {
+					$addToSet: "$type",
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
+
 # $allElementsTrue
+db.survey.aggregate([
+	{ 
+		$project: { 
+			_id: 1, 
+			responses: 1, 
+			isAllTrue: { $allElementsTrue: [ "$responses" ] }
+		}
+	}
+])
+
 # $and
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			result: { 
+				$and: [ 
+					{ $gt: [ "$qty", 100 ] }, 
+					{ $lt: [ "$qty", 250 ] },
+				]
+			}
+		}
+	}
+])
+
 # $anyElementTrue
+db.survey.aggregate([
+	{ 
+		$project: { 
+			_id: 1, 
+			responses: 1, 
+			isAnyTrue: { $anyElementTrue: [ "$responses" ] }
+		}
+	}
+])
+
 # $arrayElemAt
+db.users.aggregate([
+	{
+		$project: {
+			name: 1,
+			first: { $arrayElemAt: [ "$favorites", 0 ] },
+			last: { $arrayElemAt: [ "$favorites", -1 ] }
+		}
+	}
+])
+
 # $arrayToObject
 # $asin
 # $asinh
@@ -260,19 +368,258 @@ Expression Operators :
 # $atan2
 # $atanh
 # $avg
+db.sales.aggregate([
+	{
+		$group: {
+			_id: "$item",
+			avgAmount: { $avg: { $multiply: [ "$price", "$quantity" ] } },
+			avgQuantity: { $avg: "$quantity" }
+		}
+	}
+])
+
+db.students.aggregate([
+	{ 
+		 $project: { 
+			  quizAvg: { $avg: "$quizzes"}, 
+			  labAvg: { $avg: "$labs" }, 
+			  examAvg: { $avg: [ "$final", "$midterm" ] }
+		 } 
+	}
+])
+
 # $binarySize
 # $bottom
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$bottom: {
+					output: [ "$playerId", "$score" ],
+					sortBy: { "score": -1 }
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$bottom: {
+					output: [ "$playerId", "$score" ],
+					sortBy: { "score": -1 }
+				}
+			}
+		}
+	}
+])
+
 # $bottomN
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$bottomN: {
+					output: ["$playerId", "$score"],
+					sortBy: { "score": -1 },
+					n:3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$bottomN: {
+					output: ["$playerId", "$score"],
+					sortBy: { "score": -1 },
+					n:3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$bottomN:
+					{
+						output: "$score",
+						n: { $cond: { if: {$eq: ["$gameId","G2"] }, then: 1, else: 3 } },
+						sortBy: { "score": -1 }
+					}
+				}
+		}
+	}
+])
+
 # $bsonSize
+db.employees.aggregate([
+	{
+		"$project": {
+			"name": 1,
+			"object_size": { $bsonSize: "$$ROOT" }
+		}
+	}
+])
+
+db.employees.aggregate([
+	{
+		"$group": {
+			"_id": null,
+			"combined_object_size": { $sum: { $bsonSize: "$$ROOT" } }
+		}
+	}
+])
+
 # $ceil
+db.samples.aggregate([
+	{ $project: { value: 1, ceilingValue: { $ceil: "$value" } } }
+])
+
 # $cmp
+db.inventory.aggregate([
+	{
+		$project: {
+			_id: 1,
+			item: 1,
+			qty: 1,
+			cmpTo250: { $cmp: [ "$qty", 250 ] }
+		}
+	}
+])
+
 # $concat
+db.inventory.aggregate([
+	{ 
+		$project: { 
+			itemDescription: { $concat: [ "$item", " - ", "$description" ] } 
+		}
+	}
+])
+
 # $concatArrays
+db.warehouses.aggregate([
+	{ $project: { items: { $concatArrays: [ "$instock", "$ordered" ] } } }
+])
+
 # $cond
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			discount: {
+				$cond: { 
+					if: { $gte: [ "$qty", 250 ] }, 
+					then: "lebih besar dari 250",
+					else: "lebih kecil dari 250"
+				}
+			}
+		}
+	}
+])
+
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			discount: {
+				$cond: [ 
+					{ $gte: [ "$qty", 250 ] }, 
+					"lebih besar dari 250",
+					"lebih kecil dari 250" 
+				]
+			}
+		}
+	}
+])
+
 # $convert
+// Define stage to add convertedPrice and convertedQty fields with
+//    the converted price and qty values.
+// If price or qty values are missing, the conversion returns a
+//    value of decimal value or int value of 0.
+// If price or qty values cannot be converted, the conversion returns
+//    a string
+priceQtyConversionStage = {
+	$addFields: {
+		convertedPrice: { $convert:
+			{
+				input: "$price",
+				to: "decimal",
+				onError: "Error",
+				onNull: NumberDecimal("0")
+			} },
+		convertedQty: { $convert:
+			{
+				input: "$qty",
+				to: "int",
+				onError:{ $concat:
+					[
+						"Could not convert ",
+						{ $toString:"$qty" },
+						" to type integer."
+					]
+				},
+			onNull: Int32("0")
+		} },
+	}
+};
+totalPriceCalculationStage = {
+	$project: { totalPrice: {
+	  $switch: {
+		  branches: [
+			 { case:
+				 { $eq: [ { $type: "$convertedPrice" }, "string" ] },
+				 then: "NaN"
+			 },
+			 { case:
+				 { $eq: [ { $type: "$convertedQty" }, "string" ] },
+				 then: "NaN"
+			 },
+		  ],
+		  default: { $multiply: [ "$convertedPrice", "$convertedQty" ] }
+	  }
+}}};
+db.orders.aggregate( [
+	priceQtyConversionStage,
+	totalPriceCalculationStage
+])
+
 # $cos
 # $cosh
 # $count
+db.cakeSales.aggregate( [
+	{
+		$group: {
+			_id: "$state",
+			countNumberOfDocumentsForState: {
+				$count: {}
+			}
+		}
+	}
+] )
+
 # $covariancePop
 # $covarianceSamp
 # $dateAdd
@@ -390,6 +737,43 @@ Expression Operators :
 # $subtract
 # $sum
 # $switch
+db.grades.aggregate([
+	{
+		$project: {
+			"name" : 1,
+			"avg": { $avg: "$scores"},
+			"summary" : {
+				$switch: {
+					branches: [
+						{
+							case: { 
+								$gte : [ { $avg : "$scores" }, 90 ]
+							},
+							then: "Doing great!"
+						},
+						{
+							case: { 
+								$and : [ 
+									{ $gte : [ { $avg : "$scores" }, 80 ] },
+									{ $lt : [ { $avg : "$scores" }, 90 ] }
+								]
+							},
+							then: "Doing pretty well."
+						},
+						{
+							case: { 
+								$lt : [ { $avg : "$scores" }, 80 ]
+							},
+							then: "Needs improvement."
+						}
+					],
+					default: "No scores found."
+				}
+			}
+		}
+	}
+])
+
 # $tan
 # $tanh
 # $toBool

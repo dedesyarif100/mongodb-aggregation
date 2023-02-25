@@ -1,15 +1,25 @@
 mongodb: 
 
-db.getCollection("activities").find({status: "survey_post"})
+db.getCollection("activities").find({
+    status: "survey_post"
+})
 
 Aggregation Pipeline Stages :
 # $addFields
 db.activities.aggregate([
-    {$match: {status: "view_post"}}
+    {
+        $match: {
+            status: "view_post"
+        }
+    }
 ])
 
 db.activities.aggregate([
-    {$match: {status: "view_post"}},
+    {
+        $match: {
+            status: "view_post"
+        }
+    },
     {
         $addFields: { "cats": 20 }
     }
@@ -21,22 +31,68 @@ db.activities.aggregate([
 # $collStats
 # $count
 db.activities.aggregate([
-    {$match: { status: "view_post" }},
-    { $group: { _id: null, myCount: { $sum: 1 } } },
-    { $project: { _id: 0 } }
+    {
+        $match: { status: "view_post" }
+    },
+    {
+        $group: { 
+            _id: null, 
+            myCount: { $sum: 1 }
+        } 
+    },
+    {
+        $project: { _id: 0 } 
+    }
 ])
 
 db.categories.aggregate([
-    {$match: {
-        id: {$lte: 7}
-    }},
-    {$count: "passing_total_id"}
+    {
+        $match: {
+            id: {$lte: 7}
+        }
+    },
+    {
+        $count: "passing_total_id"
+    }
 ])
 
 # $densify
 # $documents
 # $facet
 # $fill
+db.dailysales.aggregate([
+    {
+        $fill: {
+            output: {
+                "bootsSold": { value: 0 },
+                "sandalsSold": { value: 0 },
+                "sneakersSold": { value: 0 }
+            }
+        }
+    }
+])
+
+db.stock.aggregate([
+    {
+        $set: {
+            "valueExisted": {
+                "$ifNull": [
+                    { "$toBool": { "$toString": "$price" } },
+                    false
+                ]
+            }
+        }
+    },
+    {
+        $fill: {
+            sortBy: { no: 1 },
+            output: {
+                "price": { method: "linear" }
+            }
+        }
+    }
+])
+
 # $geoNear
 # $graphLookup
 # $group
@@ -95,10 +151,12 @@ db.getCollection("roles").aggregate([
 
 # $match
 db.getCollection("polling_setups").aggregate([
-    {$match : {
-        related_article : 1,
-        title: "Do you like me now 4 ?",
-    }}
+    {
+        $match : {
+            related_article : 1,
+            title: "Do you like me now 4 ?",
+        }
+    }
 ])
 
 # $merge
@@ -106,51 +164,96 @@ db.getCollection("polling_setups").aggregate([
 # $planCacheStats
 # $project
 db.categories.aggregate([
-    {$project: {"name": 0, "slug": 0}}
+    {
+        $project: {
+            "name": 0, 
+            "slug": 0
+        }
+    }
 ])
 
 db.categories.aggregate([
-    {$project: {name: 0, slug: 0}}
+    {
+        $project: {
+            name: 0, 
+            slug: 0
+        }
+    }
 ])
 
 db.categories.aggregate([
-    {$project: {"name": 1, "slug": 1}}
+    {
+        $project: {
+            "name": 1, 
+            "slug": 1
+        }
+    }
 ])
 
 db.categories.aggregate([
-    {$project: {name: 1, slug: 1}}
+    {
+        $project: {
+            name: 1, 
+            slug: 1
+        }
+    }
 ])
 
 db.global_playlists.aggregate([
-    {$project: {
-        "post_populer.start_date": 0,
-        "post_populer.end_date": 0,
-    }}
+    {
+        $project: {
+            "post_populer.start_date": 0,
+            "post_populer.end_date": 0,
+        }
+    }
 ])
 
 db.global_playlists.aggregate([
-    {$project: {
-        "post_populer.start_date": 1,
-        "post_populer.end_date": 1,
-    }}
+    {
+        $project: {
+            "post_populer.start_date": 1,
+            "post_populer.end_date": 1,
+        }
+    }
 ])
 
 db.global_playlists.aggregate([
-    {$project: {
-        "post_populer": {
-            "start_date": 1,
-            "end_date": 1,
-         },
-    }}
+    {
+        $project: {
+            "post_populer": {
+                "start_date": 1,
+                "end_date": 1,
+            },
+        }
+    }
+])
+
+db.books.aggregate([
+    {
+        $project: {
+            title: 1,
+            "author.first": 1,
+            "author.last" : 1,
+            "author.middle": {
+                $cond: {
+                    if: { $eq: ["", "$author.middle" ]},
+                    then: "$$REMOVE",
+                    else: "$author.middle"
+                }
+            }
+        }
+    }
 ])
 
 # $redact
 # $replaceRoot
 # $replaceWith
 # $sample
-db.categories.aggregate(
-    [{ $sample: { size: 5}}]
-)
+db.categories.aggregate([
+    { 
+        $sample: { size: 5}
+    }
+])
 
 # $search
 # $searchMeta
