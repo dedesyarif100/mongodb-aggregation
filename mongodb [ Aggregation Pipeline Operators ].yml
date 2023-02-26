@@ -380,11 +380,11 @@ db.sales.aggregate([
 
 db.students.aggregate([
 	{ 
-		 $project: { 
-			  quizAvg: { $avg: "$quizzes"}, 
-			  labAvg: { $avg: "$labs" }, 
-			  examAvg: { $avg: [ "$final", "$midterm" ] }
-		 } 
+		$project: { 
+			quizAvg: { $avg: "$quizzes"}, 
+			labAvg: { $avg: "$labs" }, 
+			examAvg: { $avg: [ "$final", "$midterm" ] }
+		} 
 	}
 ])
 
@@ -569,7 +569,7 @@ priceQtyConversionStage = {
 				to: "decimal",
 				onError: "Error",
 				onNull: NumberDecimal("0")
-			} },
+			}},
 		convertedQty: { $convert:
 			{
 				input: "$qty",
@@ -582,26 +582,26 @@ priceQtyConversionStage = {
 					]
 				},
 			onNull: Int32("0")
-		} },
+		}},
 	}
 };
 totalPriceCalculationStage = {
 	$project: { totalPrice: {
-	  $switch: {
-		  branches: [
-			 { case:
-				 { $eq: [ { $type: "$convertedPrice" }, "string" ] },
-				 then: "NaN"
-			 },
-			 { case:
-				 { $eq: [ { $type: "$convertedQty" }, "string" ] },
-				 then: "NaN"
-			 },
-		  ],
-		  default: { $multiply: [ "$convertedPrice", "$convertedQty" ] }
-	  }
+		$switch: {
+			branches: [
+				{ case:
+					{ $eq: [ { $type: "$convertedPrice" }, "string" ] },
+					then: "NaN"
+				},
+				{ case:
+					{ $eq: [ { $type: "$convertedQty" }, "string" ] },
+					then: "NaN"
+				},
+			],
+			default: { $multiply: [ "$convertedPrice", "$convertedQty" ] }
+		}
 }}};
-db.orders.aggregate( [
+db.orders.aggregate([
 	priceQtyConversionStage,
 	totalPriceCalculationStage
 ])
@@ -609,7 +609,7 @@ db.orders.aggregate( [
 # $cos
 # $cosh
 # $count
-db.cakeSales.aggregate( [
+db.cakeSales.aggregate([
 	{
 		$group: {
 			_id: "$state",
@@ -618,33 +618,857 @@ db.cakeSales.aggregate( [
 			}
 		}
 	}
-] )
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				countNumberOfDocumentsForState: {
+					$count: {},
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
 
 # $covariancePop
 # $covarianceSamp
 # $dateAdd
+db.sales.aggregate([
+	{
+		$project: {
+			"item": 1,
+			"nycHour": {
+				$hour: { 
+					date: "$date", 
+					timezone: "-05:00" 
+				}
+			},
+			"nycMinute": {
+				$minute: { 
+					date: "$date", 
+					timezone: "-05:00" 
+				}
+			},
+			"gmtHour": {
+				$hour: { 
+					date: "$date", 
+					timezone: "GMT" 
+				}
+			},
+			"gmtMinute": {
+				$minute: { 
+					date: "$date", 
+					timezone: "GMT" 
+				}
+			},
+			"nycOlsonHour": {
+				$hour: { 
+					date: "$date", 
+					timezone: "America/New_York" 
+				}
+			},
+			"nycOlsonMinute": {
+				$minute: { 
+					date: "$date", 
+					timezone: "America/New_York" 
+				}
+			}
+		}
+	}
+])
+
+db.shipping.aggregate([
+	{
+		$project: {
+			expectedDeliveryDate: {
+				$dateAdd: {
+					startDate: "$purchaseDate",
+					unit: "day",
+					amount: 3
+				}
+			}
+		}
+	},
+	{ $merge: "shipping"}
+])
+
+db.shipping.aggregate([
+	{
+		$match: {
+			$expr: {
+				$gt: [ 
+					"$deliveryDate",
+					{
+						$dateAdd: {
+							startDate: "$purchaseDate",
+							unit: "day",
+							amount: 5
+						}
+					}
+				]
+			}
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			custId: 1,
+			purchased: {
+				$dateToString: {
+					format: "%Y-%m-%d",
+					date: "$purchaseDate"
+				}
+			},
+			delivery: {
+				$dateToString: {
+					format: "%Y-%m-%d",
+					date: "$deliveryDate"
+				}
+			}
+		}
+	}
+])
+
+db.billing.aggregate([
+	{
+		$project: {
+			_id: 0,
+			location: 1,
+			start: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: "$login"
+				}
+			},
+			days: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateAdd: {
+							startDate: "$login",
+							unit: "day",
+							amount: 1,
+							timezone: "$location"
+						}
+					}
+				}
+			},
+			hours: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateAdd: {
+							startDate: "$login",
+							unit: "hour",
+							amount: 24,
+							timezone: "$location"
+						}
+					}
+				}
+			},
+			startTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: "$login",
+					timezone: "$location"
+				}
+			},
+			daysTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateAdd: {
+							startDate: "$login",
+							unit: "day",
+							amount: 1,
+							timezone: "$location"
+						}
+					},
+					timezone: "$location"
+				}
+			},
+			hoursTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateAdd: {
+							startDate: "$login",
+							unit: "hour",
+							amount: 24,
+							timezone: "$location"
+						}
+					},
+					timezone: "$location"
+				}
+			},
+		}
+	}
+]).pretty()
+
+// Example Update Date
+db.shipping.updateOne(
+	{ custId: 456 },
+	{ $set: { deliveryDate: ISODate( "2021-01-10" ) } }
+)
+db.shipping.updateOne(
+	{ custId: 457 },
+	{ $set: { deliveryDate:  ISODate( "2021-03-01" ) } }
+)
+db.shipping.updateOne(
+	{ custId: 458 },
+	{ $set: { deliveryDate:  ISODate( "2021-03-02" ) } }
+)
+
 # $dateDiff
+db.shipping.aggregate([
+	{
+		$group: {
+			_id: null,
+			averageTime: {
+				$avg: {
+					$dateDiff: {
+						startDate: "$purchaseDate",
+						endDate: "$deliveryDate",
+						unit: "day"
+					}
+				}
+			}
+		}
+	},
+	{
+		$project: {
+			_id: 0,
+			numDays: {
+				$trunc: [ "$averageTime", 1 ]
+			}
+		}
+	}
+])
+
+db.subscriptions.aggregate([
+	{
+		$project: {
+			Start: "$start",
+			End: "$end",
+			years: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "year"
+				}
+			},
+			months: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "month"
+				}
+			},
+			days: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "day"
+				}
+			},
+			_id: 1
+		}
+	}
+])
+
+db.months.aggregate([
+	{
+		$project: {
+			Start: "$start",
+			End: "$end",
+			wks_default: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "week"
+				}
+			},
+			wks_monday: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "week",
+					startOfWeek: "Monday"
+				}
+			},
+			wks_friday: {
+				$dateDiff: {
+					startDate: "$start",
+					endDate: "$end",
+					unit: "week",
+					startOfWeek: "fri"
+				}
+			},
+			_id: 1
+		}
+	}
+])
+
 # $dateFromParts
-# $dateSubtract
-# $dateTrunc
-# $dateToParts
+db.sales.aggregate([
+	{
+		$project: {
+			item: 1,
+			date: {
+				$dateFromParts: {
+					'year' : 2017, 'month' : 2, 'day': 8, 'hour' : 12
+				}
+			},
+			date_iso: {
+				$dateFromParts: {
+					'isoWeekYear' : 2017, 'isoWeek' : 6, 'isoDayOfWeek' : 3, 'hour' : 12
+				}
+			},
+			date_timezone: {
+				$dateFromParts: {
+					'year' : 2016, 'month' : 12, 'day' : 31, 'hour' : 23,
+					'minute' : 46, 'second' : 12, 'timezone' : 'America/New_York'
+				}
+			}
+		}
+	}
+])
+
 # $dateFromString
+db.logmessages.aggregate([ 
+	{
+		$project: {
+			date: {
+				$dateFromString: {
+					dateString: '$date',
+					timezone: 'America/New_York'
+				}
+			}
+		}
+	}
+])
+
+db.logmessages.aggregate([ 
+	{
+		$project: {
+			date: {
+				$dateFromString: {
+					dateString: '$date',
+					timezone: '$timezone'
+				}
+			}
+		}
+	}
+])
+
+db.logmessages.aggregate([ 
+	{
+		$project: {
+			date: {
+				$dateFromString: {
+					dateString: '$date',
+					timezone: '$timezone',
+					onError: '$date'
+				}
+			}
+		}
+	}
+])
+
+# $dateSubtract
+db.connectionTime.aggregate([
+	{
+		$match: {
+			$expr: {
+				$eq: [
+					{ $year: "$logout" },
+					2021
+				]
+			},
+			$expr: {
+				$eq: [
+					{ $month: "$logout" },
+					1
+				]
+			}
+		}
+	},
+	{
+		$project: {
+			logoutTime: {
+				$dateSubtract: {
+					startDate: "$logout",
+					unit: "hour",
+					amount: 3
+				}
+			}
+		}
+	},
+	{
+		$merge: "connectionTime"
+	}
+])
+
+db.connectionTime.aggregate([
+	{
+		$match: {
+			$expr: {
+				$lt: [
+					"$logoutTime",
+					{
+						$dateSubtract: {
+							startDate: "$$NOW",
+							unit: "week",
+							amount: 1
+						}
+					}
+				]
+			}
+		}
+	},
+	{
+		$project: {
+			_id: 1,
+			custId: 1,
+			loggedOut: {
+				$dateToString: {
+					format: "%Y-%m-%d",
+					date: "$logoutTime"
+				}
+			}
+		}
+	}
+])
+
+db.billing.aggregate([
+	{
+		$project: {
+			_id: 0,
+			location: 1,
+			start: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: "$login"
+				}
+			},
+			days: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateSubtract: {
+							startDate: "$login",
+							unit: "day",
+							amount: 1,
+							timezone: "$location"
+						}
+					}
+				}
+			},
+			hours: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateSubtract: {
+							startDate: "$login",
+							unit: "hour",
+							amount: 24,
+							timezone: "$location"
+						}
+					}
+				}
+			},
+			startTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: "$login",
+					timezone: "$location"
+				}
+			},
+			daysTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateSubtract: {
+							startDate: "$login",
+							unit: "day",
+							amount: 1,
+							timezone: "$location"
+						}
+					},
+					timezone: "$location"
+				}
+			},
+			hoursTZInfo: {
+				$dateToString: {
+					format: "%Y-%m-%d %H:%M",
+					date: {
+						$dateSubtract: {
+							startDate: "$login",
+							unit: "hour",
+							amount: 24,
+							timezone: "$location"
+						}
+					},
+					timezone: "$location"
+				}
+			},
+		}
+	}
+]).pretty()
+
+# $dateToParts
+db.sales.aggregate([
+	{
+		$project: {
+			date: {
+				$dateToParts: { date: "$date" }
+			},
+			date_iso: {
+				$dateToParts: { date: "$date", iso8601: true }
+			},
+			date_timezone: {
+				$dateToParts: { date: "$date", timezone: "America/New_York" }
+			}
+		}
+	}
+])
+
 # $dateToString
+db.sales.aggregate([
+	{
+		$project: {
+			yearMonthDayUTC: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+			timewithOffsetNY: { $dateToString: { format: "%H:%M:%S:%L%z", date: "$date", timezone: "America/New_York"} },
+			timewithOffset430: { $dateToString: { format: "%H:%M:%S:%L%z", date: "$date", timezone: "+04:30" } },
+			minutesOffsetNY: { $dateToString: { format: "%Z", date: "$date", timezone: "America/New_York" } },
+			minutesOffset430: { $dateToString: { format: "%m", date: "$date", timezone: "+04:30" } }
+		}
+	}
+])
+
+# $dateTrunc
+db.cakeSales.aggregate([
+	{
+		$project: {
+			_id: 1,
+			orderDate: 1,
+			truncatedOrderDate: {
+				$dateTrunc: {
+					date: "$orderDate", 
+					unit: "week", 
+					binSize: 2,
+					timezone: "America/Los_Angeles", 
+					startOfWeek: "Monday"
+				}
+			}
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$group: {
+			_id: {
+				truncatedOrderDate: {
+					$dateTrunc: {
+						date: "$orderDate", 
+						unit: "month", 
+						binSize: 6
+					}
+				}
+			},
+			sumQuantity: { $sum: "$quantity" }
+		}
+	}
+])
+
 # $dayOfMonth
+db.sales.aggregate([
+	{
+		$project: {
+			date: 1,
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $dayOfWeek
+db.sales.aggregate([
+	{
+		$project: {
+			date: 1,
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $dayOfYear
+db.sales.aggregate([
+	{
+		$project: {
+			date: 1,
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $degreesToRadians
 # $denseRank
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { quantity: -1 },
+			output: {
+				denseRankQuantityForState: {
+					$denseRank: {}
+				}
+			}
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				denseRankQuantityForState: {
+					$denseRank: {}
+				}
+			}
+		}
+	}
+])
+
 # $derivative
+db.deliveryFleet.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$truckID",
+			sortBy: { timeStamp: 1 },
+			output: {
+				truckAverageSpeed: {
+					$derivative: {
+						input: "$miles",
+						unit: "hour"
+					},
+					window: {
+						range: [ -30, 0 ],
+						unit: "second"
+					}
+				}
+			}
+		}
+	},
+	{
+		$match: {
+			truckAverageSpeed: {
+				$gt: 50
+			}
+		}
+	}
+])
+
 # $divide
+db.planning.aggregate([
+	{
+		$project: { 
+			name: 1, 
+			workdays: { 
+				$divide: [ "$hours", 8 ]
+			}
+		}
+	}
+])
+
 # $documentNumber
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { quantity: -1 },
+			output: {
+				documentNumberForState: {
+					$documentNumber: {}
+				}
+			}
+		}
+	}
+])
+
+db.cakeSalesWithDuplicates.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { quantity: -1 },
+			output: {
+				documentNumberForState: {
+					$documentNumber: {}
+				}
+			}
+		}
+	}
+])
+
 # $eq
+db.inventory.aggregate([
+	{
+		$project: {
+			_id: 1,
+			item: 1,
+			qty: 1,
+			qtyEq250: { 
+				$eq: [ "$qty", 250 ] 
+			}
+		}
+	}
+])
+
 # $exp
+db.accounts.aggregate([
+	{
+		$project: {
+			effectiveRate: {
+				$subtract: [
+					{ $exp: "$rate"}, 1
+				]
+			}
+		}
+	}
+])
+
 # $expMovingAvg
+db.stockPrices.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$stock",
+			sortBy: { date: 1 },
+			output: {
+				expMovingAvgForStock: {
+					$expMovingAvg: { input: "$price", N: 2 }
+				}
+			}
+		}
+	}
+])
+
+db.stockPrices.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$stock",
+			sortBy: { date: 1 },
+			output: {
+				expMovingAvgForStock: {
+					$expMovingAvg: { input: "$price", alpha: 0.75 }
+				}
+			}
+		}
+	}
+])
+
 # $filter
+db.salesFilter.aggregate([
+	{
+		$project: {
+			items: {
+				$filter: {
+					input: "$items",
+					as: "item",
+					cond: { 
+						$gte: [ "$$item.price", 100 ]
+					}
+				}
+			}
+		}
+	}
+])
+
+db.salesFilter.aggregate([
+	{
+		$project: {
+			items: {
+				$filter: {
+					input: "$items",
+					cond: { 
+						$lte: [ "$$item.price", 150 ]
+					},
+					as: "item",
+					limit: 200
+				}
+			}
+		}
+	}
+])
+
+db.salesFilter.aggregate([
+	{
+		$project: {
+			items: {
+				$filter: {
+					input: "$items",
+					cond: { 
+						$gte: [ "$$item.price", 100]
+					},
+					as: "item",
+					limit: 5
+				}
+			}
+		}
+	}
+])
+
 # $first
-# $first
-# $firstN
+db.sales.aggregate([
+	{ 
+		$sort: { 
+			item: 1, 
+			date: 1 
+		}
+	},
+	{
+		$group: {
+			_id: "$item",
+			firstSale: { $first: "$date" }
+		}
+	}
+])
+
 # $firstN
 # $floor
 # $function
