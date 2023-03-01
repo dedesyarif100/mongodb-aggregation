@@ -243,7 +243,7 @@ Expression Operators :
 # $topN
 
 - Alphabetical Listing of Expression Operators :
-# $abs
+# $abs ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.ratings.aggregate([
 	{
 		$project: { 
@@ -259,7 +259,7 @@ db.ratings.aggregate([
 # $accumulator
 # $acos
 # $acosh
-# $add
+# $add ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{ 
 		$project: { 
@@ -282,7 +282,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $addToSet
+# $addToSet ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$group: {
@@ -312,7 +312,7 @@ db.cakeSales.aggregate( [
 	}
 ])
 
-# $allElementsTrue
+# $allElementsTrue ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.survey.aggregate([
 	{ 
 		$project: { 
@@ -323,7 +323,7 @@ db.survey.aggregate([
 	}
 ])
 
-# $and
+# $and ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.inventory.aggregate([
 	{
 		$project: {
@@ -339,7 +339,7 @@ db.inventory.aggregate([
 	}
 ])
 
-# $anyElementTrue
+# $anyElementTrue ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.survey.aggregate([
 	{ 
 		$project: { 
@@ -350,7 +350,7 @@ db.survey.aggregate([
 	}
 ])
 
-# $arrayElemAt
+# $arrayElemAt ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.users.aggregate([
 	{
 		$project: {
@@ -367,7 +367,7 @@ db.users.aggregate([
 # $atan
 # $atan2
 # $atanh
-# $avg
+# $avg ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$group: {
@@ -389,7 +389,7 @@ db.students.aggregate([
 ])
 
 # $binarySize
-# $bottom
+# $bottom ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.gamescores.aggregate([
 	{
 		$match : { gameId : "G1" }
@@ -421,7 +421,7 @@ db.gamescores.aggregate([
 	}
 ])
 
-# $bottomN
+# $bottomN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.gamescores.aggregate([
 	{
 		$match : { gameId : "G1" }
@@ -471,7 +471,7 @@ db.gamescores.aggregate([
 	}
 ])
 
-# $bsonSize
+# $bsonSize ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.employees.aggregate([
 	{
 		"$project": {
@@ -490,12 +490,12 @@ db.employees.aggregate([
 	}
 ])
 
-# $ceil
+# $ceil ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.samples.aggregate([
 	{ $project: { value: 1, ceilingValue: { $ceil: "$value" } } }
 ])
 
-# $cmp
+# $cmp ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.inventory.aggregate([
 	{
 		$project: {
@@ -507,7 +507,7 @@ db.inventory.aggregate([
 	}
 ])
 
-# $concat
+# $concat ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.inventory.aggregate([
 	{ 
 		$project: { 
@@ -516,12 +516,12 @@ db.inventory.aggregate([
 	}
 ])
 
-# $concatArrays
+# $concatArrays ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.warehouses.aggregate([
 	{ $project: { items: { $concatArrays: [ "$instock", "$ordered" ] } } }
 ])
 
-# $cond
+# $cond ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.inventory.aggregate([
 	{
 		$project: {
@@ -554,7 +554,7 @@ db.inventory.aggregate([
 	}
 ])
 
-# $convert
+# $convert ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // Define stage to add convertedPrice and convertedQty fields with
 //    the converted price and qty values.
 // If price or qty values are missing, the conversion returns a
@@ -608,7 +608,7 @@ db.orders.aggregate([
 
 # $cos
 # $cosh
-# $count
+# $count ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.cakeSales.aggregate([
 	{
 		$group: {
@@ -639,7 +639,7 @@ db.cakeSales.aggregate([
 
 # $covariancePop
 # $covarianceSamp
-# $dateAdd
+# $dateAdd ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -826,7 +826,7 @@ db.shipping.updateOne(
 	{ $set: { deliveryDate:  ISODate( "2021-03-02" ) } }
 )
 
-# $dateDiff
+# $dateDiff ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.shipping.aggregate([
 	{
 		$group: {
@@ -916,7 +916,7 @@ db.months.aggregate([
 	}
 ])
 
-# $dateFromParts
+# $dateFromParts ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -941,7 +941,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $dateFromString
+# $dateFromString ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.logmessages.aggregate([ 
 	{
 		$project: {
@@ -982,7 +982,7 @@ db.logmessages.aggregate([
 	}
 ])
 
-# $dateSubtract
+# $dateSubtract ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.connectionTime.aggregate([
 	{
 		$match: {
@@ -1123,7 +1123,7 @@ db.billing.aggregate([
 	}
 ]).pretty()
 
-# $dateToParts
+# $dateToParts ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -1140,7 +1140,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $dateToString
+# $dateToString ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -1153,7 +1153,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $dateTrunc
+# $dateTrunc ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.cakeSales.aggregate([
 	{
 		$project: {
@@ -1189,7 +1189,7 @@ db.cakeSales.aggregate([
 	}
 ])
 
-# $dayOfMonth
+# $dayOfMonth ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -1208,7 +1208,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $dayOfWeek
+# $dayOfWeek ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -1227,7 +1227,7 @@ db.sales.aggregate([
 	}
 ])
 
-# $dayOfYear
+# $dayOfYear ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{
 		$project: {
@@ -1247,7 +1247,7 @@ db.sales.aggregate([
 ])
 
 # $degreesToRadians
-# $denseRank
+# $denseRank ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.cakeSales.aggregate([
 	{
 		$setWindowFields: {
@@ -1276,7 +1276,7 @@ db.cakeSales.aggregate([
 	}
 ])
 
-# $derivative
+# $derivative ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.deliveryFleet.aggregate([
 	{
 		$setWindowFields: {
@@ -1305,7 +1305,7 @@ db.deliveryFleet.aggregate([
 	}
 ])
 
-# $divide
+# $divide ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.planning.aggregate([
 	{
 		$project: { 
@@ -1317,7 +1317,7 @@ db.planning.aggregate([
 	}
 ])
 
-# $documentNumber
+# $documentNumber ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.cakeSales.aggregate([
 	{
 		$setWindowFields: {
@@ -1346,7 +1346,7 @@ db.cakeSalesWithDuplicates.aggregate([
 	}
 ])
 
-# $eq
+# $eq ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.inventory.aggregate([
 	{
 		$project: {
@@ -1360,7 +1360,7 @@ db.inventory.aggregate([
 	}
 ])
 
-# $exp
+# $exp ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.accounts.aggregate([
 	{
 		$project: {
@@ -1373,7 +1373,7 @@ db.accounts.aggregate([
 	}
 ])
 
-# $expMovingAvg
+# $expMovingAvg ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.stockPrices.aggregate([
 	{
 		$setWindowFields: {
@@ -1402,7 +1402,7 @@ db.stockPrices.aggregate([
 	}
 ])
 
-# $filter
+# $filter ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.salesFilter.aggregate([
 	{
 		$project: {
@@ -1453,7 +1453,7 @@ db.salesFilter.aggregate([
 	}
 ])
 
-# $first
+# $first ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.sales.aggregate([
 	{ 
 		$sort: { 
@@ -1469,27 +1469,641 @@ db.sales.aggregate([
 	}
 ])
 
-# $firstN
-# $floor
-# $function
-# $getField
-# $gt
-# $gte
-# $hour
-# $ifNull
-# $in
-# $indexOfArray
-# $indexOfBytes
-# $indexOfCP
-# $integral
-# $isArray
-# $isNumber
-# $isoDayOfWeek
-# $isoWeek
-# $isoWeekYear
+db.badData.aggregate([
+	{ 
+		$sort: { 
+			item: 1, 
+			price: 1
+		}
+	},
+	{
+		$group: {
+			_id: "$item",
+			inStock: { $first: "$quantity" }
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				firstOrderTypeForState: {
+					$first: "$type",
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $firstN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1"},
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			firstFiveScores: {
+				$firstN: {
+					input: "$score",
+					n: 5
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			firstThreeScores: {
+				$firstN: {
+					input: ["$playerId", "$score"],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId", 
+			playerId: {
+				$firstN: {
+					input: [ "$playerId","$score" ],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{ 
+		$sort : { 
+			score : -1
+		}
+	},
+	{
+		$group: { 
+			_id: "$gameId", 
+			playerId: {
+				$firstN: {
+					input: [ "$playerId","$score" ],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$firstN: {
+					input: "$score",
+					n: { 
+						$cond: { 
+							if: { 
+								$eq: ["$gameId","G2"]
+							},
+							then: 1, 
+							else: 3
+						}
+					}
+				}
+			}
+		}
+	}
+])
+
+db.aggregate([
+	{
+		$documents: [
+			{ 
+				array: [10, 20, 30, 40] 
+			}
+		]
+	},
+	{ 
+		$project: {
+			firstThreeElements:{
+				$firstN: {
+					input: "$array",
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+# $first ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.example1.aggregate([
+	{ 
+		$addFields: { 
+			firstElem: { $first: "$x" }
+		} 
+	}
+])
+
+db.example2.aggregate({ 
+	$addFields: { 
+		firstElem: { 
+			$first: "$x" 
+		}
+	}
+})
+
+db.runninglog.aggregate([
+	 	{ 
+		$addFields: { 
+			firstrun: { $first: "$log" }, 
+			lastrun: { $last: "$log" }
+		}
+	}
+])
+
+db.runninglog.aggregate([
+	{
+		$addFields: { 
+			firstrun: { $first: "$log" },
+			lastrun: { $last: "$log" }
+		}
+	},
+	{
+		$project: {
+			team: 1, 
+			progress: {
+				$cond: {
+					if: { 
+						$gt: [ 
+							{ $size: "$log" },
+							3
+						] 
+					},
+					then: { 
+						$subtract: [ "$lastrun.distance", "$firstrun.distance"]
+					},
+					else: "Not enough data."
+				}
+			}
+		}
+	}
+])
+
+# $firstN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.games.aggregate([
+	{ 
+		$addFields: { 
+			firstScores: { 
+				$firstN: { 
+					n: 3, 
+					input: "$score"
+				}
+			}
+		}
+	}
+])
+
+# $floor ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.samples.aggregate([
+	{ 
+		$project: { 
+			value: 1, 
+			floorValue: { 
+				$floor: "$value" 
+			}
+		}
+	}
+])
+
+# $function ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.players.aggregate([
+	{ 
+		$addFields: {
+			isFound: { 
+				$function: {
+					body: function(name) {
+						return hex_md5(name) == "15b0a220baa16331e8d80e15367677ad"
+					},
+					args: [ "$name" ],
+					lang: "js"
+				}
+			},
+			message: { 
+				$function: {
+					body: function(name, scores) {
+						let total = Array.sum(scores);
+						return `Hello ${name}.  Your total score is ${total}.`
+					},
+					args: [ "$name", "$scores"],
+					lang: "js"
+				}
+			}
+		}
+	}
+])
+
+db.players.find({ 
+	$where: function() {
+	 		return (hex_md5(this.name) == "15b0a220baa16331e8d80e15367677ad")
+	}
+});
+
+db.players.find({
+	$expr: { 
+		$function: {
+			body: function(name) { 
+				return hex_md5(name) == "15b0a220baa16331e8d80e15367677ad";
+			},
+			args: [ "$name" ],
+			lang: "js"
+		}
+	}
+})
+
+# $getField ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+		$match: { 
+			$expr: { 
+				$gt: [
+					{ $getField: "price" },
+					200
+				]
+			}
+		}
+	}
+])
+
+db.inventory.aggregate([
+	{
+		$match: { 
+			$expr: { 
+				$gt: [
+					{ 
+						$getField: {
+							$literal: "price"
+						}
+					},
+					200
+				]
+			}
+		}
+	}
+])
+
+db.inventory1.aggregate([
+	{ 
+		$match: { 
+			$expr: { 
+				$lte: [
+					{ 
+						$getField: { 
+							field: { $literal: "$small" },
+							input: "$quantity"
+						}
+					},
+					20
+				]
+			}
+		}
+	}
+])
+
+# $gt ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+			 	$project: {
+						_id: 1,
+						item: 1,
+						qty: 1,
+						qtyGt250: { 
+				$gt: [ "$qty", 250 ]
+			},
+		}
+	}
+])
+
+# $gte ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+			 	$project: {
+						_id: 1,
+						item: 1,
+						qty: 1,
+						qtyGt250: { 
+				$gte: [ "$qty", 250 ]
+			},
+		}
+	}
+])
+
+# $hour ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$project: {
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" }
+		}
+	}
+])
+
+# $ifNull ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			description: { 
+				$ifNull: [ "$description", "Unspecified" ]
+			}
+		}
+	}
+])
+
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			value: { 
+				$ifNull: [ "$description", "$qty", "Unspecified" ]
+			}
+		}
+	}
+])
+
+# $in ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.fruits.aggregate([
+	{
+		$project: {
+			"store location" : "$location",
+			"has bananas" : {
+				$in: [ "bananas", "$in_stock" ]
+			}
+		}
+	}
+])
+
+# $indexOfArray ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $indexOfBytes ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $indexOfCP ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $integral ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $isArray ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.warehouses.aggregate([
+	{
+		$project: { 
+			items: { 
+				$cond: {
+					if: { 
+						$and: [ 
+							{ $isArray: "$instock" },
+							{ $isArray: "$ordered" }
+						]
+					},
+					then: { 
+						$concatArrays: [ "$instock", "$ordered" ]
+					},
+					else: "One or more fields is not an array."
+				}
+			}
+		}
+	}
+])
+
+# $isNumber ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sensors.aggregate([
+	{
+		$addFields : {
+			"isNumber" : {$isNumber : "$reading"},
+			"hasType" : {$type : "$reading"}
+		}
+	}
+])
+
+db.grades1.aggregate([
+	{
+		$addFields: {
+			"points" : {
+				$cond : {
+					if : { $isNumber : "$grade" },
+					then: "$grade",
+					else: {
+						$switch : {
+							branches: [
+								{ case: {$eq : ["$grade" , "A"]}, then : 4.0 },
+								{ case: {$eq : ["$grade" , "B"]}, then : 3.0 },
+								{ case: {$eq : ["$grade" , "C"]}, then : 2.0 },
+								{ case: {$eq : ["$grade" , "D"]}, then : 1.0 },
+								{ case: {$eq : ["$grade" , "F"]}, then : 0.0 }
+							]
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		$group : {
+			_id : "$student_id",
+			GPA : {
+				$avg : "$points"
+			}
+		}
+	}
+])
+
+# $isoDayOfWeek ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.dates1.aggregate([
+	{
+		$project: {
+			_id: 1,
+			name: "$name",
+			dayOfWeek: { 
+				$isoDayOfWeek: "$birthday"
+			}
+		}
+	}
+])
+
+# $isoWeek ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.deliveries.aggregate([
+	{
+		$project: {
+			_id: 1,
+			city: "$city",
+			weekNumber: { 
+				$isoWeek: "$date"
+			}
+		}
+	}
+])
+
+# $isoWeekYear ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.anniversaries.aggregate([
+	{
+		$project: {
+			yearNumber: { 
+				$isoWeekYear: "$date"
+			}
+		}
+	}
+])
+
+# $last ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales1.aggregate([
+	{ 
+		$sort: { item: 1, date: 1 }
+	},
+	{
+		$group: {
+			_id: "$item",
+			lastSalesDate: { $last: "$date" }
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				lastOrderTypeForState: {
+					$last: "$type",
+					window: {
+						documents: [ "current", "unbounded" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $last ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $lastN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1"},
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			lastFiveScores: {
+				$lastN: {
+					input: "$score",
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			lastThreeScores: {
+				$lastN: {
+					input: ["$playerId", "$score"],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{ 
+		$sort: { score : -1 }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			lastThreeScores: {
+				$lastN: {
+					input: ["$playerId", "$score"],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$lastN: {
+					input: "$score",
+					n: { 
+						$cond: { 
+							if: { $eq: ["$gameId","G2"] },
+							then: 1,
+							else: 3
+						}
+					}
+				}
+			}
+		}
+	}
+])
+
+db.aggregate([
+	{
+		$documents: [{ 
+			array: [10, 20, 30, 40] 
+		}]
+	},
+	{ 
+		$project: {
+			lastThreeElements: {
+				$lastN: {
+					input: "$array",
+					n: 2
+				}
+			}
+		}
+	}
+])
+
 # $last
-# $last
-# $lastN
 # $lastN
 # $let
 # $linearFill
