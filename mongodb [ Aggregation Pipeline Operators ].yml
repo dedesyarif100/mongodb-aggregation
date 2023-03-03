@@ -2103,32 +2103,502 @@ db.aggregate([
 	}
 ])
 
-# $last
-# $lastN
-# $let
-# $linearFill
-# $literal
-# $ln
-# $locf
-# $log
-# $log10
-# $lt
-# $lte
-# $ltrim
-# $map
-# $max
-# $maxN
-# $maxN
-# $mergeObjects
-# $meta
-# $min
-# $minN
-# $minN
-# $millisecond
-# $minute
-# $mod
-# $month
-# $multiply
+# $last ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $lastN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $let ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$project: {
+			finalTotal: {
+				$let: {
+					vars: {
+						total: { 
+							$add: [ '$price', '$tax' ]
+						},
+						discounted: { 
+							$cond: { 
+								if: '$applyDiscount', 
+								then: 0.9, 
+								else: 1
+							}
+						}
+					},
+					in: { 
+						$multiply: [ "$$total", "$$discounted" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $linearFill ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.stock.aggregate([
+	{
+		$setWindowFields: {
+			sortBy: { time: 1 },
+			output: {
+				price: { $linearFill: "$price" }
+			}
+		}
+	}
+])
+
+db.stock.aggregate([
+	{
+		$setWindowFields: {
+			sortBy: { time: 1 },
+			output: {
+				linearFillPrice: { $linearFill: "$price" },
+				locfPrice: { $locf: "$price" }
+			}
+		}
+	}
+])
+
+# $literal ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.records.aggregate([
+	{ 
+		$project: { 
+			costsOneDollar: { 
+				$eq: [ 
+					"$price", 
+					{ $literal: "$1" } 
+				]
+			}
+		}
+	}
+])
+
+db.bids.aggregate([
+	{ 
+		$project: { 
+			item: 1, 
+			startAt: { 
+				$literal: 1
+			}
+		}
+	}
+])
+
+# $ln ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales2.aggregate([ 
+	{ 
+		$project: { 
+			x: "$year", 
+			y: { $ln: "$sales" }
+		}
+	}
+])
+
+# $locf ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.stock.aggregate( [
+	{
+		$setWindowFields: {
+			sortBy: { time: 1 },
+			output: {
+				price: { $locf: "$price" }
+			}
+		}
+	}
+])
+
+db.stock.aggregate([
+	{
+		$setWindowFields: {
+			sortBy: { time: 1 },
+			output: {
+				linearFillPrice: { $linearFill: "$price" },
+				locfPrice: { $locf: "$price" }
+			}
+		}
+	}
+])
+
+# $log ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $log10 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $lt ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $lte ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $ltrim ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $map ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.grades2.aggregate([
+	{
+		$project: {
+			adjustedGrades: {
+				$map: {
+					input: "$quizzes",
+					as: "grade",
+					in: { 
+						$add: [ "$$grade", 5 ]
+					}
+				}
+			}
+		}
+	}
+])
+
+db.deliveries1.aggregate([
+	{
+		$project: {
+			city: "$city",
+			integerValues: {
+				$map: {
+					input: "$distances",
+					as: "decimalValue",
+					in: { $trunc: "$$decimalValue" }
+				}
+			}
+		}
+	}
+])
+
+db.temperatures.aggregate([
+	{
+		$addFields: {
+			"tempsF": {
+				$map: {
+					input: "$tempsC",
+					as: "tempInCelsius",
+					in: {
+						$add: [ 
+							{ $multiply: [ "$$tempInCelsius", 9/5 ] },
+							32
+						]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $max ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$group: {
+			_id: "$item",
+			maxTotalAmount: { 
+				$max: { 
+					$multiply: [ "$price", "$quantity" ]
+				}
+			},
+			maxQuantity: { $max: "$quantity" }
+		}
+	}
+])
+
+db.students.aggregate([
+	 	{ 
+		$project: { 
+			quizMax: { $max: "$quizzes"}, 
+			labMax: { $max: "$labs" }, 
+			examMax: { $max: [ "$final", "$midterm" ] }
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				maximumQuantityForState: {
+					$max: "$quantity",
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $maxN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1" },
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			maximumThreeScores: {
+				$maxN: {
+					input: "$score",
+					n: 4
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			maxThreeScores: {
+				$maxN: {
+					input: [ "$score", "$playerId" ],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			maxThreeScores: {
+				$maxN: {
+					input: [ "$score", "$playerId" ],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$maxN: {
+					input: [ "$score", "$playerId" ],
+					n: { 
+						$cond: { 
+							if: { $eq: ["$gameId","G2"] }, 
+							then: 1, 
+							else: 3
+						}
+					}
+				}
+			}
+		}
+	}
+])
+
+# $maxN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.scores.aggregate([
+	{ 
+		$addFields: { 
+			maxScores: { 
+				$maxN: { 
+					n: 2, 
+					input: "$score" 
+				}
+			}
+		}
+	}
+])
+
+# $mergeObjects ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.orders.aggregate([
+	{
+		$lookup: {
+			from: "items",
+			localField: "item",    // field in the orders collection
+			foreignField: "item",  // field in the items collection
+			as: "fromItems"
+		}
+	},
+	{
+		$replaceRoot: { 
+			newRoot: { 
+				$mergeObjects: [ 
+					{ $arrayElemAt: [ "$fromItems", 0 ] },
+					"$$ROOT" 
+				]
+			}
+		}
+	},
+	{ 
+		$project: { fromItems: 0 }
+	}
+])
+
+db.sales3.aggregate([
+  { 
+		$group: { 
+			_id: "$item", 
+			mergedSales: { $mergeObjects: "$quantity" }
+		}
+	}
+])
+
+# $meta ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.articles.aggregate([
+	{ 
+		$match: { 
+			$text: { $search: "cake" }
+		}
+	}
+])
+
+db.articles.aggregate([
+	{ 
+		$match: { 
+			$text: { $search: "cake" }
+		},
+		$group: { 
+			_id: { $meta: "textScore" }, 
+			count: { $sum: 1 }
+		}
+	}
+])
+
+db.orders1.createIndex({ type: 1, item: 1 })
+db.orders1.aggregate([
+	{ 
+		$match: { type: "apparel" }
+	},
+	{ 
+		$addFields: { idxKey: { $meta: "indexKey" } }
+	}
+])
+
+db.orders1.aggregate([
+	{ 
+		$match: { 
+			price: { $gte: NumberDecimal("10") }
+		}
+	},
+	{ 
+		$addFields: { 
+			idxKey: { $meta: "indexKey" }
+		} 
+	}
+])
+
+# $min ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales1.aggregate([
+	{
+		$group: {
+			_id: "$item",
+			minQuantity: { $min: "$quantity" }
+		}
+	}
+])
+
+db.students.aggregate([
+	{ 
+		$project: { 
+			quizMin: { $min: "$quizzes"}, 
+			labMin: { $min: "$labs" }, 
+			examMin: { $min: [ "$final", "$midterm" ] } 
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				minimumQuantityForState: {
+					$min: "$quantity",
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $minN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1" },
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			minimumThreeScores: {
+				$minN: {
+					input: "$score",
+					n: 4
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			minScores: {
+				$minN: {
+					input: ["$score","$playerId"],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			minScores: {
+				$minN: {
+					input: ["$score","$playerId"],
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$minN: {
+					input: ["$score","$playerId"],
+					n: { 
+						$cond: { 
+							if: { $eq: ["$gameId","G2"] }, 
+							then: 1, 
+							else: 3 
+						}
+					}
+				}
+			}
+		}
+	}
+])
+
+
+# $minN (array operator) ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $millisecond ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $minute ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $mod ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $month ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $multiply ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # $ne
 # $not
 # $objectToArray
