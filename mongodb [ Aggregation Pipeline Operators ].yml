@@ -2517,7 +2517,7 @@ db.cakeSales.aggregate([
 	}
 ])
 
-# $minN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $minN (aggregation accumulator) ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.aggregate([
 	{
 		$documents: [
@@ -2592,59 +2592,817 @@ db.gamescores.aggregate([
 	}
 ])
 
-
 # $minN (array operator) ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.scores.aggregate([
+  { $addFields: { minScores: { $minN: { n: 2, input: "$score" } } } }
+])
+
 # $millisecond ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$project: {
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $minute ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$project: {
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $mod ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.planning.aggregate([
+	{ 
+		$project: { 
+			remainder: { 
+				$mod: [ "$hours", "$tasks" ] 
+			} 
+		} 
+	}
+])
+
 # $month ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales.aggregate([
+	{
+		$project: {
+			year: { $year: "$date" },
+			month: { $month: "$date" },
+			day: { $dayOfMonth: "$date" },
+			hour: { $hour: "$date" },
+			minutes: { $minute: "$date" },
+			seconds: { $second: "$date" },
+			milliseconds: { $millisecond: "$date" },
+			dayOfYear: { $dayOfYear: "$date" },
+			dayOfWeek: { $dayOfWeek: "$date" },
+			week: { $week: "$date" }
+		}
+	}
+])
+
 # $multiply ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-# $ne
-# $not
-# $objectToArray
-# $or
-# $pow
-# $push
-# $radiansToDegrees
-# $rand
-# $range
-# $rank
-# $reduce
-# $regexFind
-# $regexFindAll
-# $regexMatch
-# $replaceOne
-# $replaceAll
-# $reverseArray
-# $round
-# $rtrim
-# $sampleRate
-# $second
-# $setDifference
-# $setEquals
-# $setField
-# $setIntersection
-# $setIsSubset
-# $setUnion
-# $shift
-# $size
-# $sin
-# $sinh
-# $slice
-# $sortArray
-# $split
-# $sqrt
-# $stdDevPop
-# $stdDevSamp
-# $strcasecmp
-# $strLenBytes
-# $strLenCP
-# $substr
-# $substrBytes
-# $substrCP
-# $subtract
-# $sum
-# $switch
+db.sales.aggregate([
+	{ 
+		$project: { 
+			date: 1, 
+			item: 1, 
+			total: { 
+				$multiply: [ "$price", "$quantity" ] 
+			} 
+		} 
+	}
+])
+
+# $ne ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			qtyNe250: { 
+				$ne: [ "$qty", 250 ] 
+			},
+			_id: 1
+		}
+	}
+])
+
+# $not ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			result: { 
+				$not: [{ 
+					$gt: [ "$qty", 250 ] 
+				}]
+			}
+		}
+	}
+])
+
+# $objectToArray ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory3.aggregate([
+	{
+		$project: {
+			item: 1,
+			dimensions: { 
+				$objectToArray: "$dimensions" 
+			}
+		}
+	}
+])
+
+db.inventory4.aggregate([
+	{ $project: { warehouses: { $objectToArray: "$instock" } } },
+	{ $unwind: "$warehouses" },
+	{ $group: { _id: "$warehouses.k", total: { $sum: "$warehouses.v" } } }
+])
+
+db.inventory4.aggregate([
+	{ $addFields: { instock: { $objectToArray: "$instock" } } },
+	{ $addFields: { instock: { $concatArrays: [ "$instock", [ { "k": "total", "v": { $sum: "$instock.v" } } ] ] } } } ,
+	{ $addFields: { instock: { $arrayToObject: "$instock" } } }
+])
+
+# $or ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory.aggregate([
+	{
+		$project: {
+			item: 1,
+			qty: 1,
+			result: { 
+				$or: [
+					{ $gt: [ "$qty", 250 ] }, 
+					{ $lt: [ "$qty", 200 ] } 
+				]
+			}
+		}
+	}
+])
+
+# $pow ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.quizzes.aggregate([
+	{ 
+		$project: { 
+			variance: { 
+				$pow: [ "$val", 2 ] 
+			} 
+		} 
+	}
+])
+
+db.quizzes.aggregate([
+	{ 
+		$project: { 
+			variance: { 
+				$pow: [ { $stdDevPop: "$scores.score" }, 2 ] 
+			} 
+		} 
+	}
+])
+
+# $push ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.sales1.aggregate([
+	{ 
+		$sort: { 
+			date: 1, 
+			item: 1 
+		} 
+	},
+	{
+		$group: {
+			_id: { 
+				day: { $dayOfYear: "$date"}, 
+				year: { $year: "$date" } 
+			},
+			itemsSold: { 
+				$push:  { 
+					item: "$item", 
+					quantity: "$quantity" 
+				}
+			}
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				quantitiesForState: {
+					$push: "$quantity",
+					window: {
+						documents: [ "unbounded", "current" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+# $radiansToDegrees ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $rand ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.donors.aggregate([
+	{ $set: { amount: { $multiply: [ { $rand: {} }, 100 ] } } },
+	{ $set: { amount_fix: "$amount" } },
+	{ $set: { amount: { $floor: "$amount" } } },
+	{ $merge: "donors" }
+])
+
+db.donors.aggregate([
+	{ $project: {_id: 1, donorId: 1, amount: 1 } }
+])
+
+db.voters.aggregate([
+	{ $match: { district: 3 } },
+	{ $match: { $expr: { $lt: [0.5, {$rand: {} } ] } } },
+	{ $project: { _id: 0, name: 1, registered: 1 } }
+])
+
+# $range ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.distances.aggregate([
+	{
+    $project: {
+			_id: 0,
+			city: 1,
+			"Rest stops": { 
+				$range: [ 0, "$distance", 25 ] 
+			}
+    }
+	}
+])
+
+# $rank ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { quantity: -1 },
+			output: {
+				rankQuantityForState: {
+					$rank: {}
+				}
+			}
+		}
+	}
+])
+
+db.cakeSales.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { orderDate: 1 },
+			output: {
+				rankOrderDateForState: {
+					$rank: {}
+				}
+			}
+		}
+	}
+])
+
+db.cakeSalesWithDuplicates.aggregate([
+	{
+		$setWindowFields: {
+			partitionBy: "$state",
+			sortBy: { quantity: -1 },
+			output: {
+				rankQuantityForState: {
+					$rank: {}
+				}
+			}
+		}
+	}
+])
+
+# $reduce ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.probability.aggregate([
+	{
+		$group: {
+			_id: "$experimentId",
+			"probabilityArr": { $push: "$probability" }
+		}
+	},
+	{
+		$project: {
+			"description": 1,
+			"results": {
+				$reduce: {
+					input: ["a", "-", "b", "-", "c", "-", "d", "-", "e", "-", "f"],
+					initialValue: "",
+					in: { 
+						$concat: [ "$$value", "$$this" ] 
+					}
+				}
+			}
+		}
+	}
+])
+
+db.probability.aggregate([
+	{
+		$group: {
+			_id: "$experimentId",
+			"probabilityArr": { $push: "$probability" }
+		}
+	},
+	{
+		$project: {
+			"description": 1,
+			"results": {
+				$reduce: {
+					input: [1, 2, 3, 4],
+					initialValue: { sum: 5, product: 2 },
+					in: {
+						sum: { $add : ["$$value.sum", "$$this"] },
+						product: { $multiply: [ "$$value.product", "$$this" ] }
+					}
+				}
+			}
+		}
+	}
+])
+
+db.probability.aggregate([
+	{
+		$group: {
+			_id: "$experimentId",
+			"probabilityArr": { $push: "$probability" }
+		}
+	},
+	{
+		$project: {
+			"description": 1,
+			"results": {
+				$reduce: {
+					input: [ [ 3, 4 ], [ 5, 6 ] ],
+					initialValue: [1, 2],
+					in: { 
+						$concatArrays : ["$$value", "$$this"] 
+					}
+				}
+			}
+		}
+	}
+])
+
+db.probability.aggregate([
+	{
+		$group: {
+			_id: "$experimentId",
+			"probabilityArr": { $push: "$probability" }
+		}
+	},
+	{
+		$project: {
+			"description": 1,
+			"results": {
+				$reduce: {
+					input: "$probabilityArr",
+					initialValue: 1,
+					in: { 
+						$multiply: [ "$$value", "$$this" ] 
+					}
+				}
+			}
+		}
+	}
+])
+
+db.clothes.aggregate([
+	{
+		$project: {
+			"discountedPrice": {
+				$reduce: {
+					input: "$discounts",
+					initialValue: "$price",
+					in: { 
+						$multiply: [ 
+							"$$value", 
+							{ $subtract: [ 1, "$$this" ] } 
+						]
+					}
+				}
+			}
+		}
+	}
+])
+
+db.people.aggregate([
+	// Filter to return only non-empty arrays
+	{ 
+		$match: { "hobbies": { $gt: [ ] } } 
+	},
+	{
+		$project: {
+			"name": 1,
+			"bio": {
+				$reduce: {
+					input: "$hobbies",
+					initialValue: "My hobbies include:",
+					in: {
+						$concat: [
+							"$$value",
+							{
+								$cond: {
+									if: { $eq: [ "$$value", "My hobbies include:" ] },
+									then: " ",
+									else: ", "
+								}
+							},
+							"$$this"
+						]
+					}
+				}
+			}
+		}
+	}
+])
+
+db.arrayconcat.aggregate([
+	{
+		$project: {
+			"collapsed": {
+				$reduce: {
+					input: "$arr",
+					initialValue: [ ],
+					in: { 
+						$concatArrays: [ "$$value", "$$this" ]
+					}
+				}
+			}
+		}
+	}
+])
+
+db.arrayconcat.aggregate([
+	{
+		$project: {
+			"results": {
+				$reduce: {
+					input: "$arr",
+					initialValue: [ ],
+					in: {
+						"collapsed": {
+							$concatArrays: [ "$$value.collapsed", "$$this" ]
+						},
+						"firstValues": {
+							$concatArrays: [ 
+								"$$value.firstValues", 
+								{ $slice: [ "$$this", 1 ] } 
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+])
+
+# $regexFind ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.myColl.aggregate([ 
+	{ 
+		$addFields: { 
+			resultObject: { 
+				$regexFind: { 
+					input: "$category", 
+					regex: /cafe/ 
+				}  
+			} 
+		} 
+	} 
+])
+
+db.contacts.aggregate([
+  {
+    $project: {
+      returnObject: {
+        $regexFind: { 
+					input: "$fname", 
+					regex: /(C(ar)*)ol/ 
+				}
+      }
+    }
+  }
+])
+
+db.contacts.aggregate([
+  {
+    $project: {
+      nycContacts: {
+        $regexFind: { 
+					input: "$phone", 
+					regex: /^(718).*|^(212).*|^(917).*/ 
+				}
+      }
+    }
+  }
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /line/ 
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /lin(e|k)/ 
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /tier/ 
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /line/i
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /lin(e|k) # matches line or link/,
+					options: "x"
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFind: { 
+					input: "$description", 
+					regex: /m.*line/, 
+					options: "si"
+				} 
+			} 
+		} 
+	}
+])
+
+db.feedback.aggregate([
+	{ 
+		$addFields: {
+			"email": { 
+				$regexFind: { 
+					input: "$comment", 
+					regex: /[a-z0-9_.+-]+@[a-z0-9_.+-]+\.[a-z0-9_.+-]+/i 
+				}
+			}
+		}
+	},
+	{ 
+		$set: { email: "$email.match"} 
+	}
+])
+
+db.contacts1.aggregate([
+	{ $unwind: "$details" },
+	{ $addFields: {
+		"regexemail": { $regexFind: { input: "$details", regex: /^[a-z0-9_.+-]+@[a-z0-9_.+-]+\.[a-z0-9_.+-]+$/, options: "i" } },
+		"regexphone": { $regexFind: { input: "$details", regex: /^[+]{0,1}[0-9]*\-?[0-9_\-]+$/ } }
+	} },
+	{ $project: { _id: 1, name: 1, details: { email: "$regexemail.match", phone: "$regexphone.match" } } },
+	{ $group: { _id: "$_id", name: { $first: "$name" }, details: { $mergeObjects: "$details"} } },
+	{ $sort: { _id: 1 } }
+])
+
+db.employees1.aggregate([
+	{ $addFields: {
+			"username": { $regexFind: { input: "$email", regex: /^([a-z0-9_.+-]+)@[a-z0-9_.+-]+\.[a-z0-9_.+-]+$/, options: "i" } },
+	} },
+	{ $set: { username: { $arrayElemAt:  [ "$username.captures", 0 ] } } }
+])
+
+# $regexFindAll ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.myColl.aggregate([ 
+	{ 
+		$addFields: { 
+			results: { 
+				$regexFindAll: { 
+					input: "$category", 
+					regex: /cafe/ 
+				}  
+			} 
+		} 
+	} 
+])
+
+db.contacts.aggregate([
+  {
+    $project: {
+      returnObject: {
+        $regexFindAll: { 
+					input: "$fname", 
+					regex: /(C(ar)*)ol/ 
+				}
+      }
+    }
+  }
+])
+
+db.contacts.aggregate([
+  {
+    $project: {
+      nycContacts: {
+        $regexFindAll: { 
+					input: "$phone", 
+					regex: /^(718).*|^(212).*|^(917).*/ 
+				}
+      }
+    }
+  }
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /line/ 
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /lin(e|k)/
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /tier/
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /line/i
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /^s/im
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /lin(e|k) # matches line or link/, 
+					options: "x"
+				} 
+			} 
+		} 
+	}
+])
+
+db.products.aggregate([
+	{ 
+		$addFields: { 
+			returnObject: { 
+				$regexFindAll: { 
+					input: "$description", 
+					regex: /m.*line/, 
+					options: "si"
+				} 
+			} 
+		} 
+	}
+])
+
+db.feedback.aggregate([
+	{ $addFields: {
+			"email": { $regexFindAll: { input: "$comment", regex: /[a-z0-9_.+-]+@[a-z0-9_.+-]+\.[a-z0-9_.+-]+/i } }
+	} },
+	{ $set: { email: "$email.match"} }
+])
+
+db.feedback.aggregate([
+	{ $addFields: {
+			"names": { $regexFindAll: { input: "$comment", regex: /([a-z0-9_.+-]+)@[a-z0-9_.+-]+\.[a-z0-9_.+-]+/i } },
+	} },
+	{ $set: { names: { $reduce: { input:  "$names.captures", initialValue: [ ], in: { $concatArrays: [ "$$value", "$$this" ] } } } } }
+])
+
+
+
+
+
+# $regexMatch ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $replaceOne ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $replaceAll ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $reverseArray ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $round ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $rtrim ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sampleRate ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $second ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setDifference ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setEquals ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setField ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setIntersection ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setIsSubset ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $setUnion ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $shift ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $size ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sin ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sinh ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $slice ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sortArray ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $split ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sqrt ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $stdDevPop ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $stdDevSamp ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $strcasecmp ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $strLenBytes ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $strLenCP ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $substr ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $substrBytes ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $substrCP ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $subtract ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $sum ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $switch ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 db.grades.aggregate([
 	{
 		$project: {
