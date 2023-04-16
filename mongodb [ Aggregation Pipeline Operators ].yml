@@ -4270,28 +4270,406 @@ db.grades.aggregate([
 	}
 ])
 
-# $tan
-# $tanh
-# $toBool
-# $toDate
-# $toDecimal
-# $toDouble
-# $toInt
-# $toLong
-# $toObjectId
-# $top
-# $topN
-# $toString
-# $toLower
-# $toUpper
-# $trim
-# $trunc
-# $tsIncrement
-# $tsSecond
-# $type
-# $unsetField
-# $week
-# $year
-# $zip
-# 
-# 
+# $tan ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $tanh ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $toBool ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+shippedConversionStage = {
+	$addFields: {
+		convertedShippedFlag: {
+			$switch: {
+				branches: [
+					{ 
+						case: { $eq: [ "$shipped", "false" ] }, 
+						then: false 
+					},
+					{ 
+						case: { $eq: [ "$shipped", "" ] }, 
+						then: false 
+					}
+				],
+				default: { $toBool: "$shipped" }
+			}
+		}
+	}
+};
+unshippedMatchStage = {
+	$match: { "convertedShippedFlag": false }
+};
+db.orders2.aggregate([
+  shippedConversionStage,
+  unshippedMatchStage
+])
+
+# $toDate ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+dateConversionStage = {
+	$addFields: {
+		convertedDate: { $toDate: "$order_date" }
+	}
+};
+sortStage = {
+	$sort: { "convertedDate": 1 }
+};
+db.orders3.aggregate( [
+	dateConversionStage,
+	sortStage
+])
+
+# $toDecimal ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+priceQtyConversionStage = {
+	$addFields: {
+		convertedPrice: { $toDecimal: "$price" },
+		convertedQty: { $toInt: "$qty" },
+	}
+};
+totalPriceCalculationStage = {
+	$project: { 
+		item: 1, 
+		totalPrice: { 
+			$multiply: [ "$convertedPrice", "$convertedQty" ] 
+		} 
+	}
+};
+db.orders4.aggregate([
+	priceQtyConversionStage,
+	totalPriceCalculationStage
+])
+
+# $toDouble ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+tempConversionStage = {
+	$addFields: {
+		degrees: { 
+			$toDouble: { $substrBytes: [ "$temp", 0, 4 ] } 
+		}
+	}
+};
+db.weather.aggregate([
+	tempConversionStage,
+])
+
+# $toInt ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+priceQtyConversionStage = {
+	$addFields: {
+		convertedPrice: { $toDecimal: "$price" },
+		convertedQty: { $toInt: "$qty" },
+	}
+};
+totalPriceCalculationStage = {
+	$project: { 
+		item: 1, 
+		totalPrice: { $multiply: [ "$convertedPrice", "$convertedQty" ] } 
+	}
+};
+db.orders5.aggregate([
+   priceQtyConversionStage,
+   totalPriceCalculationStage
+])
+
+# $toLong ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+qtyConversionStage = {
+	$addFields: {
+		convertedQty: { $toLong: "$qty" }
+	}
+};
+sortStage = {
+	$sort: { "convertedQty": -1 }
+};
+db.orders6.aggregate([
+	qtyConversionStage,
+	sortStage
+])
+
+# $toObjectId ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+idConversionStage = {
+	$addFields: {
+		convertedId: { $toObjectId: "$_id" }
+	}
+};
+sortStage = {
+	$sort: { "convertedId": -1 }
+};
+db.orders7.aggregate([
+	idConversionStage,
+	sortStage
+])
+
+# $top ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1"},
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$top: {
+					output: [ "$playerId", "$score" ],
+					sortBy: { "score": 1 }
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$top: {
+					output: [ "$playerId", "$score" ],
+					sortBy: { "score": -1 }
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$top: {
+					output: [ "$playerId", "$score" ],
+					sortBy: { "score": -1 }
+				}
+			}
+		}
+	}
+])
+
+# $topN ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.aggregate([
+	{
+		$documents: [
+			{ playerId: "PlayerA", gameId: "G1", score: 1 },
+			{ playerId: "PlayerB", gameId: "G1", score: 2 },
+			{ playerId: "PlayerC", gameId: "G1", score: 3 },
+			{ playerId: "PlayerD", gameId: "G1"},
+			{ playerId: "PlayerE", gameId: "G1", score: null }
+		]
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$topN: {
+					output: ["$playerId","$score"],
+					sortBy: {"score": -1},
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$match : { gameId : "G1" }
+	},
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$topN: {
+					output: ["$playerId", "$score"],
+					sortBy: { "score": -1 },
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: "$gameId",
+			playerId: {
+				$topN: {
+					output: ["$playerId", "$score"],
+					sortBy: { "score": -1 },
+					n: 3
+				}
+			}
+		}
+	}
+])
+
+db.gamescores.aggregate([
+	{
+		$group: {
+			_id: {"gameId": "$gameId"},
+			gamescores: {
+				$topN: {
+					output: "$score",
+					n: { 
+						$cond: { 
+							if: { $eq: ["$gameId","G2"] }, 
+							then: 1, 
+							else: 3 
+						} 
+					},
+					sortBy: { "score": -1 }
+				}
+			}
+		}
+	}
+])
+
+# $toString ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+zipConversionStage = {
+	$addFields: {
+		convertedZipCode: { $toString: "$zipcode" }
+	}
+};
+sortStage = {
+	$sort: { "convertedZipCode": 1 }
+};
+db.orders8.aggregate([
+  zipConversionStage,
+  sortStage
+])
+
+# $toLower ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory6.aggregate([
+	{
+		$project: {
+			item: { $toLower: "$item" },
+			description: { $toLower: "$description" }
+		}
+	}
+])
+
+# $toUpper ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory9.aggregate([
+	{
+		$project: {
+			item: { $toUpper: "$item" },
+		}
+	}
+])
+
+# $trim ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory6.aggregate([
+	{ 
+		$project: { 
+			item: 1, 
+			description: { 
+				$trim: { input: "$description" } 
+			} 
+		} 
+	}
+])
+
+# $trunc ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.samples.aggregate([
+	{ 
+		$project: { 
+			truncatedValue: { 
+				$trunc: [ "$value", 1 ] 
+			} 
+		} 
+	}
+])
+
+db.samples.aggregate([
+	{ 
+		$project: { 
+			truncatedValue: { 
+				$trunc: [ "$value", -1 ] 
+			} 
+		} 
+	}
+])
+
+db.samples.aggregate([
+	{ 
+		$project: { 
+			truncatedValue: { 
+				$trunc: [ "$value", 0 ] 
+			} 
+		} 
+	}
+])
+
+# $tsIncrement ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $tsSecond ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $type ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.coll.aggregate([
+	{
+	  $project: {
+			a : { $type: "$a" }
+    }
+	}
+])
+
+# $unsetField ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.inventory8.aggregate([
+	{ 
+		$replaceWith: {
+			$unsetField: {
+				field: "price.usd",
+				input: "$$ROOT"
+			}
+		}
+	}
+])
+
+db.inventory9.aggregate([
+	{ 
+		$replaceWith: {
+			$unsetField: {
+				field: { $literal: "$price" },
+				input: "$$ROOT"
+			} 
+		} 
+	}
+])
+
+db.inventory11.aggregate([
+	{ 
+		$replaceWith: {
+			$setField: {
+				field: "price",
+				input: "$$ROOT",
+				value: {
+					$unsetField: {
+						field: "euro",
+						input: { $getField: "price" }
+					} 
+				} 
+			} 
+		} 
+	}
+])
+
+# $week ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $year ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# $zip ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+db.matrices.aggregate([
+	{
+		$project: {
+			_id: true,
+			transposed: {
+				$zip: {
+					inputs: [
+						{ $arrayElemAt: [ "$matrix", 0 ] },
+						{ $arrayElemAt: [ "$matrix", 1 ] },
+						{ $arrayElemAt: [ "$matrix", 2 ] },
+					]
+				}
+			}
+		}
+	}
+])
+

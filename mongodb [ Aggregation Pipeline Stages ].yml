@@ -276,6 +276,42 @@ db.categories.aggregate([
 
 # $sortByCount
 # $unionWith
+db.suppliers1.aggregate([
+   { $project: { state: 1, _id: 1 } },
+   { $unionWith: { coll: "warehouses1", pipeline: [ { $project: { state: 1, _id: 1 } } ]} }
+])
+
+db.suppliers1.aggregate([
+   { $project: { state: 1, _id: 1 } },
+   { $unionWith: { coll: "warehouses1", pipeline: [ { $project: { state: 1, _id: 1 } } ]} },
+   { $group: { _id: "$state" } }
+])
+
+db.sales2019q1.aggregate( [
+   { $set: { _id: "2019Q1" } },
+   { $unionWith: { coll: "sales2019q2", pipeline: [ { $set: { _id: "2019Q2" } } ] } },
+   { $unionWith: { coll: "sales2019q3", pipeline: [ { $set: { _id: "2019Q3" } } ] } },
+   { $unionWith: { coll: "sales2019q4", pipeline: [ { $set: { _id: "2019Q4" } } ] } },
+   { $sort: { _id: 1, store: 1, item: 1 } }
+])
+
+db.sales2019q1.aggregate( [
+   { $unionWith: "sales2019q2" },
+   { $unionWith: "sales2019q3" },
+   { $unionWith: "sales2019q4" },
+   { $group: { _id: "$item", total: { $sum: "$quantity" } } },
+   { $sort: { total: -1 }}
+])
+
+db.sales2019q1.aggregate( [
+   { $group: { _id: "$item", total: { $sum: "$quantity" } } },
+   { $unionWith: { coll: "sales2019q2", pipeline: [ { $group: { _id: "$item", total: { $sum: "$quantity" } } } ] } },
+   { $unionWith: { coll: "sales2019q3", pipeline: [ { $group: { _id: "$item", total: { $sum: "$quantity" } } } ] } },
+   { $unionWith: { coll: "sales2019q4", pipeline: [ { $group: { _id: "$item", total: { $sum: "$quantity" } } } ] } },
+   { $group: { _id: "$_id", total: { $sum: "$total" } } },
+   { $sort: { total: -1 }}
+])
+
 # $unset
 db.categories.aggregate([
     {$unset: "name"}
