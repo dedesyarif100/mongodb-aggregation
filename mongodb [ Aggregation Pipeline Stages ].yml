@@ -149,6 +149,68 @@ db.getCollection("roles").aggregate([
     }
 ])
 
+db.orders9.aggregate([
+  {
+    $lookup: {
+      from: "inventory12",
+      localField: "item",
+      foreignField: "sku",
+      as: "inventory_docs"
+    }
+  }
+])
+
+db.classes.aggregate([
+  {
+    $lookup: {
+      from: "members",
+      localField: "enrollmentlist",
+      foreignField: "name",
+      as: "enrollee_info"
+    }
+  }
+])
+
+db.orders10.aggregate([
+  {
+    $lookup: {
+      from: "warehouses2",
+      let: { 
+        order_item: "$item", 
+        order_qty: "$ordered"
+      },
+      pipeline: [
+        { $match:
+          { $expr:
+            { $and:
+              [
+                { $eq: [ "$stock_item",  "$$order_item" ] },
+                { $gte: [ "$instock", "$$order_qty" ] }
+              ]
+            }
+          }
+        },
+        { $project: { stock_item: 0, _id: 0 } }
+      ],
+      as: "stockdata"
+    }
+  }
+])
+
+db.absences.aggregate([
+  {
+    $lookup: {
+      from: "holidays",
+      pipeline: [
+        { $match: { year: 2018 } },
+        { $project: { _id: 0, date: { name: "$name", date: "$date" } } },
+        { $replaceRoot: { newRoot: "$date" } }
+      ],
+      as: "holidays"
+    }
+  }
+])
+
 # $match
 db.getCollection("polling_setups").aggregate([
     {
